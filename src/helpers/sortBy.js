@@ -3,11 +3,11 @@ module.exports.sortBy = req => {
   let sql = '';
 
   if (sortBy == 'name') {
-    sql += 'ORDER BY j.name';
+    sql += ' ORDER BY j.name';
   } else if (sortBy == 'category') {
-    sql += 'ORDER BY c.category';
+    sql += ' ORDER BY c.category';
   } else {
-    sql += 'ORDER BY j.updated_at';
+    sql += ' ORDER BY j.updated_at';
   }
 
   return { sql, sortBy };

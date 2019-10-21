@@ -55,6 +55,7 @@ const jobController = {
         console.log(err);
       });
   },
+
   updateJob: (req, res) => {
     const id = req.params.id;
     const date = new Date()

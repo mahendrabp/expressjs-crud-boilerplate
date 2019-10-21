@@ -1,5 +1,6 @@
 const express = require('express');
 const jobController = require('../controllers/jobController');
+const redis = require('redis');
 
 const Router = express.Router();
 

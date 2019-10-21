@@ -3,8 +3,8 @@ const pagination = require('../helpers/pagination');
 const sortBy = require('../helpers/sortBy');
 
 const jobModel = {
+  // this parameter req is for pagination , if you delete parameter req, it will error , try !
   getJob: req => {
-    // this parameter req is for pagination , if you delete parameter req, it will error , try !
     let page = pagination.pagination(req);
     let name = req.query.name;
     let company = req.query.company;
@@ -52,7 +52,7 @@ const jobModel = {
 
   getJobById: req => {
     const sql =
-      'SELECT j.name, o.name as company , c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.id=? AND j.category_id = c.id AND j.company_id = o.id';
+      'SELECT j.name, o.id as company_id, o.name as company , c.id as category_id, c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.id=? AND j.category_id = c.id AND j.company_id = o.id';
     return new Promise((resolve, reject) => {
       conn.query(sql, req.params.id, (err, result) => {
         if (!err) {
@@ -75,6 +75,7 @@ const jobModel = {
       });
     });
   },
+
   updateJob: (data, id) => {
     return new Promise((resolve, reject) => {
       const sql = 'UPDATE jobs SET ? WHERE id = ?';
@@ -87,6 +88,7 @@ const jobModel = {
       });
     });
   },
+
   deleteJob: id => {
     return new Promise((resolve, reject) => {
       const sql = 'DELETE FROM jobs WHERE id = ?';
