@@ -1,18 +1,46 @@
 const conn = require('../configs/db');
+const pagination = require('../helpers/pagination');
 
 const jobModel = {
-  getJob: () => {
-    const sql =
-      'SELECT j.name, o.name as company , c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.category_id = c.id AND j.company_id = o.id';
+  getJob: req => {
+    // this parameter req is for pagination , if you delete parameter req, it will error , try !
+    let page = pagination.pagination(req);
+    let name = req.query.name;
+    let company = req.query.company;
+
+    let sql =
+      'SELECT j.name, o.name as company , c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.company_id = o.id AND j.category_id = c.id';
 
     return new Promise((resolve, reject) => {
-      conn.query(sql, (err, result) => {
-        if (!err) {
-          resolve(result);
-        } else {
-          reject(err);
-        }
-      });
+      if (name != null) {
+        sql += ' AND j.name LIKE ? AND o.name LIKE ?';
+      } else {
+        sql;
+      }
+
+      const paging = `${sql} LIMIT ? OFFSET ?`;
+
+      if (name == null && company == null) {
+        conn.query(paging, [page.limit, page.offset], (err, result) => {
+          if (!err) {
+            resolve(result);
+          } else {
+            reject(err);
+          }
+        });
+      } else {
+        conn.query(
+          paging,
+          ['%' + name + '%', '%' + company + '%', page.limit, page.offset],
+          (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          }
+        );
+      }
     });
   },
 

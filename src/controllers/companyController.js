@@ -43,6 +43,7 @@ const companyController = {
 
   updateCompany: (req, res) => {
     const id = req.params.id;
+
     const { name, logo, location, description } = req.body;
     const data = {
       name,
