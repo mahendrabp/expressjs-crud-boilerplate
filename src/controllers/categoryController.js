@@ -1,15 +1,36 @@
 const categoryModel = require('../models/category');
+const client = require('../helpers/redis');
 
 const categoryController = {
+  // getCategory: (req, res) => {
+  //   categoryModel
+  //     .getCategory(req)
+  //     .then(result => {
+  //       res.status(200).json(result);
+  //     })
+  //     .catch(err => {
+  //       res.status(400).json(err);
+  //     });
+  // },
+
   getCategory: (req, res) => {
-    categoryModel
-      .getCategory(req)
-      .then(result => {
-        res.status(200).json(result);
-      })
-      .catch(err => {
-        res.status(400).json(err);
-      });
+    const categoryKeyRedis = 'root:categories';
+    return client.get(categoryKeyRedis, (err, result) => {
+      if (result) {
+        return res.json({ source: 'cache', data: JSON.parse(result) });
+      } else {
+        categoryModel
+          .getCategory(req)
+          .then(result => {
+            client.setex(categoryKeyRedis, 3600, JSON.stringify(result));
+            return res.json({ source: 'api', data: result });
+          })
+          .catch(error => {
+            console.log(error);
+            return res.json(error.toString());
+          });
+      }
+    });
   },
 
   getCategoryById: (req, res) => {
@@ -17,7 +38,7 @@ const categoryController = {
       .getCategoryById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          res.status(200).json(result);
         } else {
           res.status(400).json(`${result}Category ID Not Found`);
         }
@@ -35,7 +56,7 @@ const categoryController = {
     categoryModel
       .postCategory(data)
       .then(result => {
-        res.json(result);
+        res.status(200).json(result);
       })
       .catch(err => {
         res.status(400).json(err);
@@ -53,7 +74,7 @@ const categoryController = {
       .updateCategory(data, id)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          res.status(200).json(result);
         } else {
           res.status(400).json(`Category ID Not Found`);
         }
@@ -65,12 +86,11 @@ const categoryController = {
 
   deleteCategory: (req, res) => {
     const id = req.params.id;
-
     categoryModel
       .deleteCategory(id)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          res.status(200).json(result);
         } else {
           res.status(400).json(`Category ID Not Found`);
         }

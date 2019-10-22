@@ -50,15 +50,20 @@ const userController = {
       //   }
       // })
       .then(result => {
-        const arrayEmail = result.filter(function(person) {
-          return person.email == email;
+        const arrayEmail = result.filter(el => {
+          return el.email == email;
         });
 
         if (arrayEmail.length == 0) {
           res.status(400).send({
-            error: 'id not found'
+            error: 'id or email not found'
+          });
+
+          return (arrayEmail[0] = {
+            password: 0
           });
         }
+
         const passArr = arrayEmail[0].password;
 
         bcrypt.compare(password, passArr).then(isMatch => {
@@ -77,9 +82,10 @@ const userController = {
                 jwt.sign(
                   payload,
                   'secret',
-                  { expiresIn: 3600 },
+                  { expiresIn: 36000 },
                   (err, token) => {
                     if (err) console.log(err);
+
                     res.json({
                       status: 200,
                       error: false,

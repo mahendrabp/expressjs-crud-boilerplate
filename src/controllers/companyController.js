@@ -1,16 +1,46 @@
 const companyModel = require('../models/company');
+const client = require('../helpers/redis');
 
 const companyController = {
   getCompany: (req, res) => {
-    companyModel
-      .getCompany(req)
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        res.status(400).json(err);
-      });
+    const companyKeyRedis = 'root:companies';
+    return client.get(companyKeyRedis, (err, result) => {
+      if (result) {
+        return res.json({ source: 'cache', data: JSON.parse(result) });
+      } else {
+        companyModel
+          .getCompany(req)
+          .then(result => {
+            client.setex(companyKeyRedis, 3600, JSON.stringify(result));
+            return res.json({ source: 'api', data: result });
+          })
+          .catch(error => {
+            console.log(error);
+            return res.json(error.toString());
+          });
+      }
+    });
   },
+
+  // getCategory: (req, res) => {
+  //   const categoryKeyRedis = 'root:categories';
+  //   return client.get(categoryKeyRedis, (err, result) => {
+  //     if (result) {
+  //       return res.json({ source: 'cache', data: JSON.parse(result) });
+  //     } else {
+  //       categoryModel
+  //         .getCategory(req)
+  //         .then(result => {
+  //           client.setex(categoryKeyRedis, 3600, JSON.stringify(result));
+  //           return res.json({ source: 'api', data: result });
+  //         })
+  //         .catch(error => {
+  //           console.log(error);
+  //           return res.json(error.toString());
+  //         });
+  //     }
+  //   });
+  // },
 
   getCompanyById: (req, res) => {
     companyModel

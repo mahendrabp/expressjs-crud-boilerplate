@@ -1,16 +1,37 @@
 const jobModel = require('../models/job'); //import jobModel
 const uuidv4 = require('uuid/v4'); //uudi
+const client = require('../helpers/redis');
 
 const jobController = {
+  // getJob: (req, res) => {
+  //   jobModel
+  //     .getJob(req)
+  //     .then(result => {
+  //       res.json(result);
+  //     })
+  //     .catch(err => {
+  //       res.status(400).json(err);
+  //     });
+  // },
+
   getJob: (req, res) => {
-    jobModel
-      .getJob(req)
-      .then(result => {
-        res.json(result);
-      })
-      .catch(err => {
-        res.status(400).json(err);
-      });
+    const jobKeyRedis = 'root:jobs';
+    return client.get(jobKeyRedis, (err, result) => {
+      if (result) {
+        return res.json({ source: 'cache', data: JSON.parse(result) });
+      } else {
+        jobModel
+          .getJob(req)
+          .then(result => {
+            client.setex(jobKeyRedis, 3600, JSON.stringify(result));
+            return res.json({ source: 'api', data: result });
+          })
+          .catch(error => {
+            console.log(error);
+            return res.json(error.toString());
+          });
+      }
+    });
   },
 
   getJobById: (req, res) => {
