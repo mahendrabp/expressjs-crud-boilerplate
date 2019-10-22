@@ -12,7 +12,7 @@ Router.get('/', cache.route(), userController.getUser)
   .get('/:id', isAuthorize, userController.getUserById)
   .post('/login', userController.loginUser)
   .post('/register', cache.route(), userController.registerUser)
-  .patch('/:id', cache.route(), isAuthorize, userController.updateUser)
+  .patch('/:id', isAuthorize, userController.updateUser)
   .delete('/:id', isAuthorize, userController.deleteUser);
 
 module.exports = Router;
