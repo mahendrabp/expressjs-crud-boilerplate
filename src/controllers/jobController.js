@@ -1,5 +1,5 @@
-const jobModel = require('../models/job');
-const uuidv4 = require('uuid/v4');
+const jobModel = require('../models/job'); //import jobModel
+const uuidv4 = require('uuid/v4'); //uudi
 
 const jobController = {
   getJob: (req, res) => {
@@ -9,17 +9,22 @@ const jobController = {
         res.json(result);
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
+
   getJobById: (req, res) => {
     jobModel
       .getJobById(req)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.status(200).json(result);
+        } else {
+          res.status(400).json(`Job ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -49,10 +54,10 @@ const jobController = {
     jobModel
       .postJob(data)
       .then(result => {
-        res.json(result);
+        res.status(200).json(result);
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -85,10 +90,14 @@ const jobController = {
     jobModel
       .updateJob(data, id)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.json(result);
+        } else {
+          res.status(400).json(`Job ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -97,10 +106,14 @@ const jobController = {
     jobModel
       .deleteJob(id)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.json(result);
+        } else {
+          res.status(400).json(`Job ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   }
 };

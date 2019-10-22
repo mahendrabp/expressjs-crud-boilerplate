@@ -8,7 +8,7 @@ const companyController = {
         res.json(result);
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -16,10 +16,14 @@ const companyController = {
     companyModel
       .getCompanyById(req)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.json(result);
+        } else {
+          res.status(400).json(`${result}Company ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -34,10 +38,10 @@ const companyController = {
     companyModel
       .postCompany(data)
       .then(result => {
-        res.json(result);
+        res.status(200).json(result);
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -55,10 +59,14 @@ const companyController = {
     companyModel
       .updateCompany(data, id)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.json(result);
+        } else {
+          res.status(400).json(`Company ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   },
 
@@ -68,10 +76,14 @@ const companyController = {
     companyModel
       .deleteCompany(id)
       .then(result => {
-        res.json(result);
+        if (result.length > 0) {
+          res.json(result);
+        } else {
+          res.status(400).json(`Company ID Not Found`);
+        }
       })
       .catch(err => {
-        console.log(err);
+        res.status(400).json(err);
       });
   }
 };

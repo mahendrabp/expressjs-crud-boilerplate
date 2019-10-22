@@ -1,36 +1,61 @@
-const express = require('express');
+const express = require('express'); // must be there
 const bodyParser = require('body-parser');
-const configs = require('./src/configs/configs');
+const configs = require('./src/configs/configs'); // import cofiguration file
 const cors = require('cors');
 const logger = require('./src/helpers/logger');
 const redis = require('redis');
-// const logger = require('morgan')
+const passport = require('passport');
 
-const app = express();
-const port = configs.port;
-const routerNav = require('./src/index');
+const app = express(); // init app express
+const port = configs.port; // take port
+const routerNav = require('./src/index'); // this is for Route
 
-const client = redis.createClient(6379);
+//start redist //
+// const client = redis.createClient(6379); // wtf idk what is this
+// client.on('connect', () => {
+//   console.log(`connected to redis`);
+// });
+// client.on('error', err => {
+//   console.log(`Error: ${err}`);
+// });
 
-client.on('connect', () => {
-  console.log(`connected to redis`);
-});
-client.on('error', err => {
-  console.log(`Error: ${err}`);
-});
+// let redisMiddleware = (req, res, next) => {
+//   let key = '__expIress__' + req.originalUrl || req.url;
+//   client.get(key, function(err, reply) {
+//     if (reply) {
+//       res.send(reply);
+//     } else {
+//       res.sendResponse = res.send;
+//       res.send = body => {
+//         client.set(key, JSON.stringify(body));
+//         res.sendResponse(body);
+//       };
+//       next();
+//     }
+//   });
+// };
+//end redis //
 
+//passport middleware
+app.use(passport.initialize());
+app.use(passport.session());
+require('./src/helpers/auth')(passport);
+
+//listenn port
 app.listen(port, () => {
   console.log(`\n Server listening on port ${port} \n`);
 });
-app.use(logger);
+
+app.use(logger); // use logger
+
+//start use body-parser
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-// app.use(logger('dev'));
-app.use(cors());
+// end use body-parser
 
+app.use(cors());
 app.use((req, res, next) => {
   res.header('Access-Control-Allow-Origin', '*');
-
   // authorized headers for preflight requests
   // https://developer.mozilla.org/en-US/docs/Glossary/preflight_request
   res.header(
@@ -49,6 +74,7 @@ app.use((req, res, next) => {
   });
 });
 
+//root route yanng atas
 app.use('/', routerNav);
 
 module.exports = app;

@@ -1,20 +1,23 @@
 const conn = require('../configs/db');
 const pagination = require('../helpers/pagination');
 const sortBy = require('../helpers/sortBy');
+const sqlredis = require('../helpers/mysqlRedis');
 
 const jobModel = {
-  // this parameter req is for pagination , if you delete parameter req, it will error , try !
+  // make a variable to locate model of job
+  // this parameter 'req' below is for pagination , if you delete parameter 'req', it will error , try !
   getJob: req => {
-    let page = pagination.pagination(req);
-    let name = req.query.name;
+    let page = pagination.pagination(req); // make a variable page which contain 'pagination.pagination(req)' , pagination first is from import above, pagination second is name export from that , then take parameter req
+    let name = req.query.name; // this variable name is contain req.query.name , remember query is parameter from URL , like localhost:3000/?nama=
     let company = req.query.company;
-    let sort = sortBy.sortBy(req);
+    let sort = sortBy.sortBy(req); // same as page above
 
     let sql =
       'SELECT j.name as job, o.name as company , c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.company_id = o.id AND j.category_id = c.id';
 
     return new Promise((resolve, reject) => {
-      if (name != null) {
+      // Promise? idk what is this, we will study this later
+      if (name != null || company != null) {
         sql += ' AND j.name LIKE ? AND o.name LIKE ?';
       } else {
         sql;
@@ -63,6 +66,7 @@ const jobModel = {
       });
     });
   },
+
   postJob: data => {
     const sql = 'INSERT INTO jobs SET ?';
     return new Promise((resolve, reject) => {

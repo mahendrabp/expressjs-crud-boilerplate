@@ -1,5 +1,6 @@
-require('dotenv/config')
+require('dotenv/config');
 
+//this is fror env
 module.exports = {
   database: {
     mysql: {
@@ -29,4 +30,4 @@ module.exports = {
   },
   jwtSecret: process.env.JWT_KEY,
   headerSecret: process.env.HEADERS_SECRET
-}
+};
