@@ -10,3 +10,5 @@ client.on('error', err => {
 });
 
 module.exports = client;
+
+//https://medium.com/tech-tajawal/introduction-to-caching-redis-node-js-e477eb969eab

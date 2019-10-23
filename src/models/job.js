@@ -1,7 +1,6 @@
 const conn = require('../configs/db');
 const pagination = require('../helpers/pagination');
 const sortBy = require('../helpers/sortBy');
-const sqlredis = require('../helpers/mysqlRedis');
 
 const jobModel = {
   // make a variable to locate model of job

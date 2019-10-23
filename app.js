@@ -3,7 +3,7 @@ const bodyParser = require('body-parser');
 const configs = require('./src/configs/configs'); // import cofiguration file
 const cors = require('cors');
 const logger = require('./src/helpers/logger');
-const redis = require('redis');
+// const redis = require('redis');
 const passport = require('passport');
 
 const app = express(); // init app express
@@ -41,7 +41,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 require('./src/helpers/auth')(passport);
 
-//listenn port
+//listen port
 app.listen(port, () => {
   console.log(`\n Server listening on port ${port} \n`);
 });

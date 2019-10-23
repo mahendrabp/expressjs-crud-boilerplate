@@ -4,6 +4,12 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const client = require('../helpers/redis');
 
+/**
+ * @description :
+ * @param {request from front end} req
+ * @param {response from backend} res
+ */
+
 const userController = {
   getUser: (req, res) => {
     userModel

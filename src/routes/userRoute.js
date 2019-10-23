@@ -8,10 +8,10 @@ const Router = express.Router();
 // Passport Authenticate
 const isAuthorize = passport.authenticate('jwt', { session: false });
 
-Router.get('/', cache.route(), userController.getUser)
+Router.get('/', userController.getUser)
   .get('/:id', isAuthorize, userController.getUserById)
   .post('/login', userController.loginUser)
-  .post('/register', cache.route(), userController.registerUser)
+  .post('/register', userController.registerUser)
   .patch('/:id', isAuthorize, userController.updateUser)
   .delete('/:id', isAuthorize, userController.deleteUser);
 

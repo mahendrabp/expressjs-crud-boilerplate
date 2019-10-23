@@ -7,8 +7,8 @@ const Router = express.Router();
 
 Router.get('/', jobController.getJob)
   .get('/:id', jobController.getJobById)
-  .post('/', cache.route(), jobController.postJob)
-  .patch('/:id', cache.route(), jobController.updateJob)
-  .delete('/:id', cache.route(), jobController.deleteJob);
+  .post('/', jobController.postJob)
+  .patch('/:id', jobController.updateJob)
+  .delete('/:id', jobController.deleteJob);
 
 module.exports = Router;

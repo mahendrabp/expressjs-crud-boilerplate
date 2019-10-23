@@ -2,6 +2,12 @@ const jobModel = require('../models/job'); //import jobModel
 const uuidv4 = require('uuid/v4'); //uudi
 const client = require('../helpers/redis');
 
+/**
+ * @description :
+ * @param {request from front end} req
+ * @param {response from backend} res
+ */
+
 const jobController = {
   // getJob: (req, res) => {
   //   jobModel
@@ -15,20 +21,33 @@ const jobController = {
   // },
 
   getJob: (req, res) => {
-    const jobKeyRedis = 'root:jobs';
+    let name = req.query.name; // this variable name is contain req.query.name , remember query is parameter from URL , like localhost:3000/?nama=
+    let company = req.query.company;
+
+    const jobKeyRedis = `jobs?${name}?${company}`;
+    console.log(jobKeyRedis);
     return client.get(jobKeyRedis, (err, result) => {
+      // console.log(result);
+
       if (result) {
-        return res.json({ source: 'cache', data: JSON.parse(result) });
+        return res.json({
+          source: 'cache',
+          message: 'this result from redis',
+          data: JSON.parse(result)
+        });
       } else {
         jobModel
           .getJob(req)
           .then(result => {
-            client.setex(jobKeyRedis, 3600, JSON.stringify(result));
-            return res.json({ source: 'api', data: result });
+            client.setex(jobKeyRedis, 60, JSON.stringify(result));
+            return res.json({
+              source: 'api',
+              message: 'this result from api',
+              data: result
+            });
           })
           .catch(error => {
             console.log(error);
-            return res.json(error.toString());
           });
       }
     });

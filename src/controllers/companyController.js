@@ -1,6 +1,12 @@
 const companyModel = require('../models/company');
 const client = require('../helpers/redis');
 
+/**
+ * @description :
+ * @param {request from front end} req
+ * @param {response from backend} res
+ */
+
 const companyController = {
   getCompany: (req, res) => {
     const companyKeyRedis = 'root:companies';

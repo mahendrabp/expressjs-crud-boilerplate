@@ -13,6 +13,12 @@ const categoryController = {
   //     });
   // },
 
+  /**
+   * @description :
+   * @param {request from front end} req
+   * @param {response from backend} res
+   */
+
   getCategory: (req, res) => {
     const categoryKeyRedis = 'root:categories';
     return client.get(categoryKeyRedis, (err, result) => {
@@ -56,7 +62,9 @@ const categoryController = {
     categoryModel
       .postCategory(data)
       .then(result => {
-        res.status(200).json(result);
+        res.send(200, {
+          message: 'success add category'
+        });
       })
       .catch(err => {
         res.status(400).json(err);
@@ -74,7 +82,9 @@ const categoryController = {
       .updateCategory(data, id)
       .then(result => {
         if (result.length > 0) {
-          res.status(200).json(result);
+          res.send(200, {
+            message: 'success update category'
+          });
         } else {
           res.status(400).json(`Category ID Not Found`);
         }
