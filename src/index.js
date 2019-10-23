@@ -8,10 +8,10 @@ const jobs = require('./routes/jobRoute');
 const users = require('./routes/userRoute');
 
 //then route to this
-Route.use('/categories', categories);
-Route.use('/companies', companies);
-Route.use('/jobs', jobs);
-Route.use('/users', users);
+Route.use('/api/v1/categories', categories);
+Route.use('/api/v1/companies', companies);
+Route.use('/api/v1/jobs', jobs);
+Route.use('/api/v1/users', users);
 
 Route.use('/', (req, res) => {
   res.send('halo');

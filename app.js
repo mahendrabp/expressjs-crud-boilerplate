@@ -5,6 +5,7 @@ const cors = require('cors');
 const logger = require('./src/helpers/logger');
 // const redis = require('redis');
 const passport = require('passport');
+require('./src/helpers/auth')(passport);
 
 const app = express(); // init app express
 const port = configs.port; // take port
@@ -39,7 +40,6 @@ const routerNav = require('./src/index'); // this is for Route
 //passport middleware
 app.use(passport.initialize());
 app.use(passport.session());
-require('./src/helpers/auth')(passport);
 
 //listen port
 app.listen(port, () => {

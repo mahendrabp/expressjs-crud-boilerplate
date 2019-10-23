@@ -9,17 +9,6 @@ const client = require('../helpers/redis');
  */
 
 const jobController = {
-  // getJob: (req, res) => {
-  //   jobModel
-  //     .getJob(req)
-  //     .then(result => {
-  //       res.json(result);
-  //     })
-  //     .catch(err => {
-  //       res.status(400).json(err);
-  //     });
-  // },
-
   getJob: (req, res) => {
     let name = req.query.name; // this variable name is contain req.query.name , remember query is parameter from URL , like localhost:3000/?nama=
     let company = req.query.company;

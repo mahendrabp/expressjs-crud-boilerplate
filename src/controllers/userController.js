@@ -31,7 +31,7 @@ const userController = {
         if (result.length > 0) {
           res.json(result);
         } else {
-          res.status(400).json(`${result}User ID Not Found`);
+          res.status(404).json(`${result}User ID Not Found`);
         }
       })
       .catch(err => {
@@ -77,29 +77,23 @@ const userController = {
             userModel
               .loginUser(email, password)
               .then(result => {
-                // Payload
+                // for Payload
                 const payload = {
                   id: result.id,
                   email: result.email,
                   password: result.password
                 };
 
-                // Token
-                jwt.sign(
-                  payload,
-                  'secret',
-                  { expiresIn: 36000 },
-                  (err, token) => {
-                    if (err) console.log(err);
-
-                    res.json({
-                      status: 200,
-                      error: false,
-                      message: 'Success to login',
-                      token: 'Bearer ' + token
-                    });
-                  }
-                );
+                // for Token
+                jwt.sign(payload, 'secret', { expiresIn: 60 }, (err, token) => {
+                  if (err) console.log(err);
+                  res.json({
+                    status: 200,
+                    error: false,
+                    message: 'Success to login',
+                    token: 'Bearer ' + token
+                  });
+                });
               })
               .catch(err => console.log(err));
           } else {
