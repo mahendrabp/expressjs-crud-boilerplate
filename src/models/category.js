@@ -2,8 +2,8 @@ const conn = require('../configs/db');
 
 const categoryModel = {
   getCategory: () => {
-    const sql = 'SELECT * FROM categories';
     return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM categories';
       conn.query(sql, (err, result) => {
         if (!err) {
           resolve(result);
@@ -15,8 +15,8 @@ const categoryModel = {
   },
 
   getCategoryById: req => {
-    const sql = 'SELECT * FROM categories WHERE id=?';
     return new Promise((resolve, reject) => {
+      const sql = 'SELECT * FROM categories WHERE id=?';
       conn.query(sql, req.params.id, (err, result) => {
         if (!err) {
           resolve(result);
@@ -28,8 +28,8 @@ const categoryModel = {
   },
 
   postCategory: data => {
-    const sql = 'INSERT INTO categories SET ?';
     return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO categories SET ?';
       conn.query(sql, data, (err, result) => {
         if (!err) {
           resolve(result);
@@ -39,21 +39,6 @@ const categoryModel = {
       });
     });
   },
-
-  // updateCategory: req => {
-  //   return new Promise((resolve, reject) => {
-  //     const param = req.params;
-  //     const body = req.body;
-  //     const sql = 'UPDATE categories SET category=? WHERE id = ?';
-  //     conn.query(sql, [body.name, param.id], (err, result) => {
-  //       if (!err) {
-  //         resolve(result);
-  //       } else {
-  //         reject(new Error(err));
-  //       }
-  //     });
-  //   });
-  // },
 
   updateCategory: (data, id) => {
     return new Promise((resolve, reject) => {

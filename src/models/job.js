@@ -53,9 +53,9 @@ const jobModel = {
   },
 
   getJobById: req => {
-    const sql =
-      'SELECT j.name, o.id as company_id, o.name as company , c.id as category_id, c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.id=? AND j.category_id = c.id AND j.company_id = o.id';
     return new Promise((resolve, reject) => {
+      const sql =
+        'SELECT j.name, o.id as company_id, o.name as company , c.id as category_id, c.category as category, j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.id=? AND j.category_id = c.id AND j.company_id = o.id';
       conn.query(sql, req.params.id, (err, result) => {
         if (!err) {
           resolve(result);
@@ -67,8 +67,8 @@ const jobModel = {
   },
 
   postJob: data => {
-    const sql = 'INSERT INTO jobs SET ?';
     return new Promise((resolve, reject) => {
+      const sql = 'INSERT INTO jobs SET ?';
       conn.query(sql, data, (err, result) => {
         if (!err) {
           resolve(result);
@@ -81,8 +81,8 @@ const jobModel = {
 
   updateJob: (data, id) => {
     return new Promise((resolve, reject) => {
-      const sql = 'UPDATE jobs SET ? WHERE id = ?';
       conn.query(sql, [data, id], (err, result) => {
+        const sql = 'UPDATE jobs SET ? WHERE id = ?';
         if (!err) {
           resolve(result);
         } else {

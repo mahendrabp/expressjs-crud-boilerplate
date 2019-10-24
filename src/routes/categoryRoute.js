@@ -1,6 +1,6 @@
 const express = require('express');
 const categoryController = require('../controllers/categoryController');
-const cache = require('express-redis-cache')();
+
 const Router = express.Router();
 
 //Request category_table

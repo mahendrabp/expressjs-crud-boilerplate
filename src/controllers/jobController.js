@@ -10,18 +10,13 @@ const client = require('../helpers/redis');
 
 const jobController = {
   getJob: (req, res) => {
-    let name = req.query.name; // this variable name is contain req.query.name , remember query is parameter from URL , like localhost:3000/?nama=
-    let company = req.query.company;
-
-    const jobKeyRedis = `jobs?${name}?${company}`;
+    const jobKeyRedis = `${req.originalUrl}`;
     console.log(jobKeyRedis);
     return client.get(jobKeyRedis, (err, result) => {
-      // console.log(result);
-
       if (result) {
         return res.json({
           source: 'cache',
-          message: 'this result from redis',
+          message: 'this result from cache',
           data: JSON.parse(result)
         });
       } else {
@@ -43,13 +38,37 @@ const jobController = {
   },
 
   getJobById: (req, res) => {
+    const jobKeyRedis = `${req.originalUrl}`;
+    console.log(jobKeyRedis);
     jobModel
       .getJobById(req)
       .then(result => {
-        if (result.length > 0) {
-          res.status(200).json(result);
+        if (result.length < 1) {
+          res.status(400).json(`${result}Category ID Not Found`);
         } else {
-          res.status(400).json(`Job ID Not Found`);
+          return client.get(jobKeyRedis, (err, result) => {
+            if (result) {
+              return res.json({
+                source: 'cache',
+                message: 'this result from cache',
+                data: JSON.parse(result)
+              });
+            } else {
+              jobModel
+                .getJobById(req)
+                .then(result => {
+                  client.setex(jobKeyRedis, 60, JSON.stringify(result));
+                  return res.json({
+                    source: 'api',
+                    message: 'this result from api',
+                    data: result
+                  });
+                })
+                .catch(error => {
+                  console.log(error);
+                });
+            }
+          });
         }
       })
       .catch(err => {
@@ -59,6 +78,8 @@ const jobController = {
 
   postJob: (req, res) => {
     const id = uuidv4();
+    const jobKeyRedis = `${req.originalUrl}`;
+    console.log(jobKeyRedis);
     const {
       name,
       description,
@@ -83,7 +104,13 @@ const jobController = {
     jobModel
       .postJob(data)
       .then(result => {
-        res.status(200).json(result);
+        client.del(jobKeyRedis, 60);
+        res.status(200).json({
+          status: 200,
+          error: false,
+          message: 'Success to add new job',
+          data
+        });
       })
       .catch(err => {
         res.status(400).json(err);
@@ -91,6 +118,7 @@ const jobController = {
   },
 
   updateJob: (req, res) => {
+    const jobKeyRedis = `${req.originalUrl}`;
     const id = req.params.id;
     const date = new Date()
       .toISOString()
@@ -116,11 +144,31 @@ const jobController = {
       company_id,
       updated_at
     };
+    // jobModel
+    //   .updateJob(data, id)
+    //   .then(result => {
+    //     client.del(jobKeyRedis, 60);
+    //     res.json(result);
+    //   })
+    //   .catch(err => {
+    //     res.status(400).json(err);
+    //   });
+
     jobModel
-      .updateJob(data, id)
+      .getJobById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          jobModel
+            .updateJob(data, id)
+            .then(result => {
+              client.del(jobKeyRedis);
+              res.status(200).send({
+                message: 'success update job'
+              });
+            })
+            .catch(err => {
+              res.status(400).json(err);
+            });
         } else {
           res.status(400).json(`Job ID Not Found`);
         }
@@ -130,13 +178,35 @@ const jobController = {
       });
   },
 
+  // deleteJob: (req, res) => {
+  //   const jobKeyRedis = `${req.originalUrl}`;
+  //   const id = req.params.id;
+  //   jobModel
+  //     .deleteJob(id)
+  //     .then(result => {
+  //       client.del(jobKeyRedis, 60);
+  //       res.json(result);
+  //     })
+  //     .catch(err => {
+  //       res.status(400).json(err);
+  //     });
+  // }
   deleteJob: (req, res) => {
     const id = req.params.id;
     jobModel
-      .deleteJob(id)
+      .getJobById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          jobModel
+            .deleteJob(id)
+            .then(result => {
+              res.status(200).send({
+                message: 'success delete job'
+              });
+            })
+            .catch(err => {
+              res.status(400).json(err);
+            });
         } else {
           res.status(400).json(`Job ID Not Found`);
         }

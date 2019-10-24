@@ -1,6 +1,5 @@
 const express = require('express');
 const companyController = require('../controllers/companyController');
-const cache = require('express-redis-cache')();
 
 const Router = express.Router();
 

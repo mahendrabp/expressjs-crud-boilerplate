@@ -2,7 +2,7 @@ const userModel = require('../models/user');
 const uuid = require('uuid/v4');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const client = require('../helpers/redis');
+// const client = require('../helpers/redis');
 
 /**
  * @description :
@@ -43,18 +43,6 @@ const userController = {
     const { email, password } = req.body;
     userModel
       .getUser()
-      // .then(result => {
-      //   const arrayEmail = result.filter(function(person) {
-      //     return person.email == email;
-      //   });
-
-      //   if (arrayEmail.length == 0) {
-      //     res.status(400).send('error no id found');
-      //   } else {
-      //     const passArr = arrayEmail[0].password;
-      //     return passArr;
-      //   }
-      // })
       .then(result => {
         const arrayEmail = result.filter(el => {
           return el.email == email;
@@ -136,51 +124,74 @@ const userController = {
     const data = {};
     if (email) data.email = email;
     if (password) data.password = password;
-    if (typeof data.password == 'undefined') {
-      userModel
-        .updateUser(data, id)
-        .then(result =>
-          res.json({
-            status: 200,
-            error: false,
-            message: `Success to updating user with ID: ${id}`,
-            data
-          })
-        )
-        .catch(err => console.log(err));
-    } else {
-      bcrypt.genSalt(10, (err, salt) => {
-        bcrypt.hash(data.password, salt, (err, hash) => {
-          if (err) throw err;
-          data.password = hash;
-          userModel
-            .updateUser(data)
-            .then(result =>
-              res.json({
-                status: 200,
-                error: false,
-                message: `Success to updating password of user with ID: ${id}`,
-                data
-              })
-            )
-            .catch(err => console.log(err));
-        });
+
+    userModel
+      .getUserById(req)
+      .then(response => {
+        if (response.length > 0) {
+          if (typeof data.password == 'undefined') {
+            userModel
+              .updateUser(data, id)
+              .then(result =>
+                res.json({
+                  status: 200,
+                  error: false,
+                  message: `Success to updating user with ID: ${id}`,
+                  data
+                })
+              )
+              .catch(err => console.log(err));
+          } else {
+            bcrypt.genSalt(10, (err, salt) => {
+              bcrypt.hash(data.password, salt, (err, hash) => {
+                if (err) throw err;
+                data.password = hash;
+                userModel
+                  .updateUser(data)
+                  .then(result =>
+                    res.json({
+                      status: 200,
+                      error: false,
+                      message: `Success to updating password of user with ID: ${id}`,
+                      data
+                    })
+                  )
+                  .catch(err => console.log(err));
+              });
+            });
+          }
+        } else {
+          res.status(400).json({ message: 'user not found' });
+        }
+      })
+      .catch(err => {
+        res.status(400).json(err);
       });
-    }
   },
 
   deleteUser: (req, res) => {
     const { id } = req.params;
     userModel
-      .deleteUser(id)
-      .then(result =>
-        res.json({
-          status: 200,
-          error: false,
-          message: 'Deleting successful'
-        })
-      )
-      .catch(err => console.log(err));
+      .getUserById(req)
+      .then(result => {
+        if (result.length > 0) {
+          userModel
+            .deleteUser(id)
+            .then(result => {
+              res.status(200).send({
+                message: 'success delete user'
+              });
+            })
+            .catch(err => {
+              res.status(400).json(err);
+            });
+        } else {
+          res.status(400).json(`User ID Not Found`);
+        }
+      })
+      .catch(err => {
+        res.status(400).json(err);
+      });
   }
 };
 

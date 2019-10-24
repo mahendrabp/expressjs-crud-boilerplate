@@ -9,16 +9,24 @@ const client = require('../helpers/redis');
 
 const companyController = {
   getCompany: (req, res) => {
-    const companyKeyRedis = 'root:companies';
+    const companyKeyRedis = `${req.originalUrl}`;
     return client.get(companyKeyRedis, (err, result) => {
       if (result) {
-        return res.json({ source: 'cache', data: JSON.parse(result) });
+        return res.json({
+          source: 'cache',
+          message: 'this result from cache',
+          data: JSON.parse(result)
+        });
       } else {
         companyModel
           .getCompany(req)
           .then(result => {
             client.setex(companyKeyRedis, 3600, JSON.stringify(result));
-            return res.json({ source: 'api', data: result });
+            return res.json({
+              source: 'api',
+              message: 'this result from api',
+              data: result
+            });
           })
           .catch(error => {
             console.log(error);
@@ -28,27 +36,8 @@ const companyController = {
     });
   },
 
-  // getCategory: (req, res) => {
-  //   const categoryKeyRedis = 'root:categories';
-  //   return client.get(categoryKeyRedis, (err, result) => {
-  //     if (result) {
-  //       return res.json({ source: 'cache', data: JSON.parse(result) });
-  //     } else {
-  //       categoryModel
-  //         .getCategory(req)
-  //         .then(result => {
-  //           client.setex(categoryKeyRedis, 3600, JSON.stringify(result));
-  //           return res.json({ source: 'api', data: result });
-  //         })
-  //         .catch(error => {
-  //           console.log(error);
-  //           return res.json(error.toString());
-  //         });
-  //     }
-  //   });
-  // },
-
   getCompanyById: (req, res) => {
+    // const companyKeyRedis = `${req.originalUrl}`;
     companyModel
       .getCompanyById(req)
       .then(result => {
@@ -74,7 +63,9 @@ const companyController = {
     companyModel
       .postCompany(data)
       .then(result => {
-        res.status(200).json(result);
+        res.status(200).send({
+          message: 'success add company'
+        });
       })
       .catch(err => {
         res.status(400).json(err);
@@ -83,7 +74,6 @@ const companyController = {
 
   updateCompany: (req, res) => {
     const id = req.params.id;
-
     const { name, logo, location, description } = req.body;
     const data = {
       name,
@@ -93,12 +83,21 @@ const companyController = {
     };
 
     companyModel
-      .updateCompany(data, id)
-      .then(result => {
-        if (result.length > 0) {
-          res.json(result);
+      .getCompanyById(req)
+      .then(response => {
+        if (response.length > 0) {
+          companyModel
+            .updateCompany(data, id)
+            .then(response => {
+              res.status(200).send({
+                message: 'success update company'
+              });
+            })
+            .catch(err => {
+              res.status(400).json(err);
+            });
         } else {
-          res.status(400).json(`Company ID Not Found`);
+          res.status(400).json({ message: 'company not found' });
         }
       })
       .catch(err => {
@@ -108,12 +107,20 @@ const companyController = {
 
   deleteCompany: (req, res) => {
     const id = req.params.id;
-
     companyModel
-      .deleteCompany(id)
+      .getCompanyById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          companyModel
+            .deleteCompany(id)
+            .then(result => {
+              res.status(200).send({
+                message: 'success delete company'
+              });
+            })
+            .catch(err => {
+              res.status(400).json(err);
+            });
         } else {
           res.status(400).json(`Company ID Not Found`);
         }

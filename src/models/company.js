@@ -52,6 +52,28 @@ const companyModel = {
       });
     });
   },
+
+  updateCategory: (req, res) => {
+    categoryModel
+      .getCategoryById(req)
+      .then(response => {
+        if (response.length > 0) {
+          categoryModel
+            .updateCategory(req)
+            .then(response => {
+              form.success(res, 200, response);
+            })
+            .catch(error => {
+              form.error(res, 400, error);
+            });
+        } else {
+          form.error(res, 400, 'Category ID Not Found');
+        }
+      })
+      .catch(error => {
+        form.error(res, 400, error);
+      });
+  },
   deleteCompany: id => {
     return new Promise((resolve, reject) => {
       const sql = 'DELETE FROM companies WHERE id = ?';
