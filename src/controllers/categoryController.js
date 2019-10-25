@@ -14,6 +14,7 @@ const categoryController = {
       if (result) {
         return res.json({
           source: 'cache',
+          error: false,
           message: 'this result from cache',
           data: JSON.parse(result)
         });
@@ -41,9 +42,12 @@ const categoryController = {
       .getCategoryById(req)
       .then(result => {
         if (result.length < 1) {
-          res.status(400).json(`${result}Category ID Not Found`);
+          return res.json({
+            status: 404,
+            error: true,
+            message: 'category ID Not found'
+          });
         } else {
-          console.log(result);
           res.status(200).json(result);
         }
       })
@@ -60,12 +64,18 @@ const categoryController = {
     categoryModel
       .postCategory(data)
       .then(result => {
-        res.status(200).send({
+        return res.status(200).json({
+          status: 200,
+          error: false,
           message: 'success add category'
         });
       })
       .catch(err => {
-        res.status(400).json(err);
+        return res.status(400).json({
+          status: 404,
+          error: true,
+          message: err
+        });
       });
   },
 
@@ -82,7 +92,10 @@ const categoryController = {
           categoryModel
             .updateCategory(data, id)
             .then(result => {
-              res.status(200).send({
+              console.log(result);
+              return res.status(200).json({
+                status: 200,
+                error: false,
                 message: 'success update category'
               });
             })
@@ -90,11 +103,19 @@ const categoryController = {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json(`Category ID Not Found`);
+          return res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'category ID not found'
+          });
         }
       })
       .catch(err => {
-        res.status(400).json(err);
+        return res.status(404).json({
+          status: 400,
+          error: true,
+          message: 'error'
+        });
       });
   },
 
@@ -107,7 +128,9 @@ const categoryController = {
           categoryModel
             .deleteCategory(id)
             .then(result => {
-              res.status(200).send({
+              return res.status(200).json({
+                status: 200,
+                error: false,
                 message: 'success delete category'
               });
             })
@@ -115,11 +138,19 @@ const categoryController = {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json(`Category ID Not Found`);
+          return res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'category ID not found'
+          });
         }
       })
       .catch(err => {
-        res.status(400).json(err);
+        return res.status(400).json({
+          status: 400,
+          error: true,
+          message: 'error'
+        });
       });
   }
 };

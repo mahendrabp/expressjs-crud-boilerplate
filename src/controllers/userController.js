@@ -280,15 +280,18 @@ const userController = {
               res.json({
                 status: 200,
                 error: false,
-                message: `Success delete user with ID: ${id}`,
-                data
+                message: `Success delete user with ID: ${id}`
               });
             })
             .catch(err => {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json(`User ID Not Found`);
+          res.status(400).json({
+            status: 400,
+            error: false,
+            message: `User ID not found`
+          });
         }
       })
       .catch(err => {

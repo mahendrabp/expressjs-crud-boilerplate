@@ -16,6 +16,7 @@ const jobController = {
       if (result) {
         return res.json({
           source: 'cache',
+          error: false,
           message: 'this result from cache',
           data: JSON.parse(result)
         });
@@ -26,6 +27,7 @@ const jobController = {
             client.setex(jobKeyRedis, 60, JSON.stringify(result));
             return res.json({
               source: 'api',
+              error: false,
               message: 'this result from api',
               data: result
             });
@@ -50,6 +52,7 @@ const jobController = {
             if (result) {
               return res.json({
                 source: 'cache',
+                error: false,
                 message: 'this result from cache',
                 data: JSON.parse(result)
               });
@@ -60,6 +63,7 @@ const jobController = {
                   client.setex(jobKeyRedis, 60, JSON.stringify(result));
                   return res.json({
                     source: 'api',
+                    error: false,
                     message: 'this result from api',
                     data: result
                   });
