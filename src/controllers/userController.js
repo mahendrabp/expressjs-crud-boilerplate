@@ -3,7 +3,7 @@ const uuid = require('uuid/v4');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 // const client = require('../helpers/redis');
-const form = require('../helpers/formresponse');
+// const form = require('../helpers/formresponse');
 const secretKey = process.env.API_JWT_SECRET || 'secret';
 
 /**
@@ -22,11 +22,12 @@ const userController = {
             .status(400)
             .json({ status: 400, error: true, message: 'User is empty' });
         } else {
-          console.log(result[0]);
+          result.forEach(k => delete k.password);
           res.status(200).json({
             status: 200,
             error: false,
-            message: 'data user'
+            message: 'data user',
+            data: result
           });
         }
       })
@@ -38,9 +39,19 @@ const userController = {
       .getUserById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          result.forEach(k => delete k.password);
+          res.status(200).json({
+            status: 200,
+            error: false,
+            message: 'data user',
+            data: result
+          });
         } else {
-          res.status(404).json(`${result}User ID Not Found`);
+          res.status(404).json({
+            status: 404,
+            error: true,
+            message: `User ID Not Found`
+          });
         }
       })
       .catch(err => {
@@ -57,19 +68,15 @@ const userController = {
         const arrayEmail = result.filter(el => {
           return el.email == email;
         });
-
         if (arrayEmail.length == 0) {
           res.status(400).send({
             error: 'id or email not found'
           });
-
           return (arrayEmail[0] = {
             password: 0
           });
         }
-
         const passArr = arrayEmail[0].password;
-
         bcrypt.compare(password, passArr).then(isMatch => {
           if (isMatch) {
             userModel
@@ -81,12 +88,11 @@ const userController = {
                   email: result.email,
                   password: result.password
                 };
-
                 // for Token
                 jwt.sign(
                   payload,
                   secretKey,
-                  { expiresIn: 180 },
+                  { expiresIn: 3600 },
                   (err, token) => {
                     if (err) console.log(err);
                     console.log(token);
@@ -226,7 +232,9 @@ const userController = {
                   status: 200,
                   error: false,
                   message: `Success to updating user with ID: ${id}`,
-                  data
+                  data: {
+                    email
+                  }
                 })
               )
               .catch(err => console.log(err));
@@ -241,8 +249,10 @@ const userController = {
                     res.json({
                       status: 200,
                       error: false,
-                      message: `Success to updating password of user with ID: ${id}`,
-                      data
+                      message: `Success to updating user with ID: ${id}`,
+                      data: {
+                        email
+                      }
                     })
                   )
                   .catch(err => console.log(err));
@@ -267,8 +277,11 @@ const userController = {
           userModel
             .deleteUser(id)
             .then(result => {
-              res.status(200).send({
-                message: 'success delete user'
+              res.json({
+                status: 200,
+                error: false,
+                message: `Success delete user with ID: ${id}`,
+                data
               });
             })
             .catch(err => {
