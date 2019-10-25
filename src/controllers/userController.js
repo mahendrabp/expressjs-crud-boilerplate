@@ -3,6 +3,8 @@ const uuid = require('uuid/v4');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 // const client = require('../helpers/redis');
+const form = require('../helpers/formresponse');
+const secretKey = process.env.API_JWT_SECRET || 'secret';
 
 /**
  * @description :
@@ -16,9 +18,16 @@ const userController = {
       .getUser()
       .then(result => {
         if (result.length < 1) {
-          res.status(400).json({ message: 'User is empty' });
+          res
+            .status(400)
+            .json({ status: 400, error: true, message: 'User is empty' });
         } else {
-          res.status(200).json(result);
+          console.log(result[0]);
+          res.status(200).json({
+            status: 200,
+            error: false,
+            message: 'data user'
+          });
         }
       })
       .catch(err => console.log(err));
@@ -44,6 +53,7 @@ const userController = {
     userModel
       .getUser()
       .then(result => {
+        //filter apakah ada email di database
         const arrayEmail = result.filter(el => {
           return el.email == email;
         });
@@ -73,15 +83,21 @@ const userController = {
                 };
 
                 // for Token
-                jwt.sign(payload, 'secret', { expiresIn: 60 }, (err, token) => {
-                  if (err) console.log(err);
-                  res.json({
-                    status: 200,
-                    error: false,
-                    message: 'Success to login',
-                    token: 'Bearer ' + token
-                  });
-                });
+                jwt.sign(
+                  payload,
+                  secretKey,
+                  { expiresIn: 180 },
+                  (err, token) => {
+                    if (err) console.log(err);
+                    console.log(token);
+                    res.json({
+                      status: 200,
+                      error: false,
+                      message: 'Success to login',
+                      token: token
+                    });
+                  }
+                );
               })
               .catch(err => console.log(err));
           } else {
@@ -98,8 +114,45 @@ const userController = {
 
   registerUser: (req, res) => {
     const id = uuid();
-    const { email, password } = req.body;
+    // const { email, password } = req.body;
+
+    // let passwd = password;
+
+    const isEmailValid = email => {
+      const checkRegex = /\S+@\S+\.\S+/;
+      return email.match(checkRegex) == null ? false : true;
+    };
+    const isPasswordValid = password => {
+      const checkRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/;
+      return password.match(checkRegex) == null ? false : true;
+    };
+
+    if (req.body.email == '' || req.body.email == null) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'email can not be empty' });
+    } else if (!isEmailValid(req.body.email)) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'email must be valid' });
+    }
+    const email = req.body.email;
+
+    if (req.body.password == '' || req.body.password == null) {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: 'password can not be null'
+      });
+    } else if (!isPasswordValid(req.body.password)) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'password must be valid' });
+    }
+    const password = req.body.password;
+
     const data = { id, email, password };
+
     bcrypt.genSalt(10, (err, salt) => {
       bcrypt.hash(data.password, salt, (err, hash) => {
         data.password = hash;
@@ -110,7 +163,9 @@ const userController = {
               status: 200,
               error: false,
               message: 'Success to register new user',
-              data
+              data: {
+                email
+              }
             })
           )
           .catch(err => console.log(err));
@@ -120,7 +175,41 @@ const userController = {
 
   updateUser: (req, res) => {
     const { id } = req.params;
-    const { email, password } = req.body;
+    const isEmailValid = email => {
+      const checkRegex = /\S+@\S+\.\S+/;
+      return email.match(checkRegex) == null ? false : true;
+    };
+    const isPasswordValid = password => {
+      const checkRegex = /(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.{6,})/;
+      return password.match(checkRegex) == null ? false : true;
+    };
+
+    if (req.body.email == '' || req.body.email == null) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'email can not be empty' });
+    } else if (!isEmailValid(req.body.email)) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'email must be valid' });
+    }
+    const email = req.body.email;
+
+    if (req.body.password == '' || req.body.password == null) {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: 'password can not be null'
+      });
+    } else if (!isPasswordValid(req.body.password)) {
+      return res
+        .status(400)
+        .json({ status: 400, error: true, message: 'password must be valid' });
+    }
+    const password = req.body.password;
+
+    // const data = { id, email, password };
+    // const { email, password } = req.body;
     const data = {};
     if (email) data.email = email;
     if (password) data.password = password;

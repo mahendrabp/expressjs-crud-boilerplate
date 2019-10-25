@@ -81,8 +81,8 @@ const jobModel = {
 
   updateJob: (data, id) => {
     return new Promise((resolve, reject) => {
+      const sql = 'UPDATE jobs SET ? WHERE id = ?';
       conn.query(sql, [data, id], (err, result) => {
-        const sql = 'UPDATE jobs SET ? WHERE id = ?';
         if (!err) {
           resolve(result);
         } else {
