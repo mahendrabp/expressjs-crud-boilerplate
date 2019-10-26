@@ -14,6 +14,8 @@ const companyController = {
       if (result) {
         return res.json({
           source: 'cache',
+          status: 200,
+          error: false,
           message: 'this result from cache',
           data: JSON.parse(result)
         });
@@ -24,12 +26,14 @@ const companyController = {
             client.setex(companyKeyRedis, 3600, JSON.stringify(result));
             return res.json({
               source: 'api',
+              status: 200,
+              error: false,
               message: 'this result from api',
               data: result
             });
           })
           .catch(error => {
-            console.log(error);
+            // console.log(error);
             return res.json(error.toString());
           });
       }
@@ -42,9 +46,19 @@ const companyController = {
       .getCompanyById(req)
       .then(result => {
         if (result.length > 0) {
-          res.json(result);
+          return res.json({
+            source: 'cache',
+            status: 200,
+            error: false,
+            message: 'success get company by id',
+            data: result
+          });
         } else {
-          res.status(400).json(`${result}Company ID Not Found`);
+          return res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'company ID not found'
+          });
         }
       })
       .catch(err => {
@@ -54,6 +68,36 @@ const companyController = {
 
   postCompany: (req, res) => {
     const { name, logo, location, description } = req.body;
+
+    if (name == null || name == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `name company can't be empty`
+      });
+    }
+    if (logo == null || logo == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `logo company can't be empty`
+      });
+    }
+    if (location == null || location == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `location company can't be empty`
+      });
+    }
+    if (description == null || description == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `description company can't be empty`
+      });
+    }
+
     const data = {
       name,
       logo,
@@ -63,18 +107,52 @@ const companyController = {
     companyModel
       .postCompany(data)
       .then(result => {
-        res.status(200).send({
+        return res.status(200).json({
+          status: 200,
+          error: false,
           message: 'success add company'
         });
       })
       .catch(err => {
-        res.status(400).json(err);
+        return res.status(400).json({
+          status: 400,
+          error: true,
+          message: err
+        });
       });
   },
 
   updateCompany: (req, res) => {
     const id = req.params.id;
     const { name, logo, location, description } = req.body;
+    if (name == null || name == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `name company can't be empty`
+      });
+    }
+    if (logo == null || logo == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `logo company can't be empty`
+      });
+    }
+    if (location == null || location == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `location company can't be empty`
+      });
+    }
+    if (description == null || description == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `description company can't be empty`
+      });
+    }
     const data = {
       name,
       logo,
@@ -89,7 +167,9 @@ const companyController = {
           companyModel
             .updateCompany(data, id)
             .then(response => {
-              res.status(200).send({
+              return res.status(200).json({
+                status: 200,
+                error: false,
                 message: 'success update company'
               });
             })
@@ -97,7 +177,11 @@ const companyController = {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json({ message: 'company not found' });
+          return res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'company ID not found'
+          });
         }
       })
       .catch(err => {
@@ -122,7 +206,11 @@ const companyController = {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json(`Company ID Not Found`);
+          return res.status(404).json({
+            status: 404,
+            error: true,
+            message: 'company ID not found'
+          });
         }
       })
       .catch(err => {

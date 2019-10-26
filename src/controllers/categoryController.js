@@ -25,6 +25,7 @@ const categoryController = {
             client.setex(categoryKeyRedis, 3600, JSON.stringify(result));
             return res.json({
               source: 'api',
+              error: false,
               message: 'this result from api',
               data: result
             });
@@ -57,6 +58,18 @@ const categoryController = {
   },
 
   postCategory: (req, res) => {
+    console.log(req.body.category);
+    if (
+      req.body.category === null ||
+      req.body.category === [] ||
+      req.body.category === ''
+    ) {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `category can't be empty`
+      });
+    }
     const { category } = req.body;
     const data = {
       category
@@ -72,7 +85,7 @@ const categoryController = {
       })
       .catch(err => {
         return res.status(400).json({
-          status: 404,
+          status: 400,
           error: true,
           message: err
         });
@@ -81,10 +94,23 @@ const categoryController = {
 
   updateCategory: (req, res) => {
     const id = req.params.id;
+    if (
+      req.body.category === null ||
+      req.body.category === [] ||
+      req.body.category === ''
+    ) {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `category can't be empty`
+      });
+    }
+
     const { category } = req.body;
     const data = {
       category
     };
+
     categoryModel
       .getCategoryById(req)
       .then(result => {

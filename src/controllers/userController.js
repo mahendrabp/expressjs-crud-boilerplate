@@ -61,6 +61,26 @@ const userController = {
 
   loginUser: (req, res) => {
     const { email, password } = req.body;
+    if (
+      req.body.email == null ||
+      req.body.email == '' ||
+      req.body.email === null
+    ) {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `email can't be empty`
+      });
+    }
+
+    if (req.body.password == null || req.body.password == '') {
+      return res.status(400).json({
+        status: 400,
+        error: true,
+        message: `password can't be empty`
+      });
+    }
+
     userModel
       .getUser()
       .then(result => {
@@ -68,14 +88,18 @@ const userController = {
         const arrayEmail = result.filter(el => {
           return el.email == email;
         });
+
         if (arrayEmail.length == 0) {
-          res.status(400).send({
-            error: 'id or email not found'
+          res.status(404).send({
+            status: 404,
+            error: true,
+            message: 'id or email not found'
           });
           return (arrayEmail[0] = {
             password: 0
           });
         }
+
         const passArr = arrayEmail[0].password;
         bcrypt.compare(password, passArr).then(isMatch => {
           if (isMatch) {
@@ -287,8 +311,8 @@ const userController = {
               res.status(400).json(err);
             });
         } else {
-          res.status(400).json({
-            status: 400,
+          res.status(404).json({
+            status: 404,
             error: false,
             message: `User ID not found`
           });
