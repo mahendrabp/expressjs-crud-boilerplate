@@ -157,7 +157,7 @@ const userController = {
       return password.match(checkRegex) == null ? false : true;
     };
 
-    if (req.body.email == '' || req.body.email == null) {
+    if (req.body.email === '' || req.body.email === null) {
       return res
         .status(400)
         .json({ status: 400, error: true, message: 'email can not be empty' });
@@ -198,7 +198,13 @@ const userController = {
               }
             })
           )
-          .catch(err => console.log(err));
+          .catch(err => {
+            return res.status(400).json({
+              status: 400,
+              error: true,
+              message: 'unexpected error'
+            });
+          });
       });
     });
   },
@@ -279,7 +285,13 @@ const userController = {
                       }
                     })
                   )
-                  .catch(err => console.log(err));
+                  .catch(err => {
+                    return res.status(400).json({
+                      status: 400,
+                      error: true,
+                      message: 'email already taken'
+                    });
+                  });
               });
             });
           }

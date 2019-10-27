@@ -87,7 +87,7 @@ const categoryController = {
         return res.status(400).json({
           status: 400,
           error: true,
-          message: err
+          message: 'category already exist'
         });
       });
   },
@@ -126,7 +126,11 @@ const categoryController = {
               });
             })
             .catch(err => {
-              res.status(400).json(err);
+              return res.status(404).json({
+                status: 404,
+                error: true,
+                message: 'category already exist'
+              });
             });
         } else {
           return res.status(404).json({

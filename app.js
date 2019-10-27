@@ -5,8 +5,14 @@ const configs = require('./src/configs/configs'); // import cofiguration file
 const logger = require('./src/helpers/logger');
 const passport = require('passport');
 require('./src/helpers/auth')(passport);
+const multer = require('multer');
 
 const app = express(); // init app express
+//start use body-parser
+app.use(cors());
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
+// end use body-parser
 const port = configs.port; // take port
 const routerNav = require('./src/index'); // this is for Route
 require('colors');
@@ -16,13 +22,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(logger); // use logger
-
-//start use body-parser
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: false }));
-// end use body-parser
-
-app.use(cors());
 
 //root route yanng atas
 app.use('/', routerNav);

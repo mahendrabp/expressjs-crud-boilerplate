@@ -43,25 +43,61 @@ const userModel = {
 
   registerUser: data => {
     return new Promise((resolve, reject) => {
-      const sql = 'INSERT INTO users SET ?';
-      conn.query(sql, data, (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM users WHERE email = ?';
+      conn.query(sql, data.email, (err, result) => {
+        console.log(result.length);
+        if (result.length < 1) {
+          const sql = 'INSERT INTO users SET ?';
+          conn.query(sql, data, (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(new Error(err));
+            }
+          });
         } else {
-          reject(new Error(err));
+          reject(err);
         }
       });
+      // const sql = 'INSERT INTO users SET ?';
+      // conn.query(sql, data, (err, result) => {
+      //   if (!err) {
+      //     resolve(result);
+      //   } else {
+      //     reject(new Error(err));
+      //   }
+      // });
     });
   },
 
+  // updateUser: (data, id) => {
+  //   return new Promise((resolve, reject) => {
+  //     const sql = 'UPDATE users SET ? WHERE id=?';
+  //     conn.query(sql, [data, id], (err, result) => {
+  //       if (!err) {
+  //         resolve(result);
+  //       } else {
+  //         reject(new Error(err));
+  //       }
+  //     });
+  //   });
+  // },
   updateUser: (data, id) => {
     return new Promise((resolve, reject) => {
-      const sql = 'UPDATE users SET ? WHERE id=?';
-      conn.query(sql, [data, id], (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM users WHERE email = ?';
+      conn.query(sql, data.email, (err, result) => {
+        console.log(result.length);
+        if (result.length < 1) {
+          const sql = 'UPDATE users SET ? WHERE id=?';
+          conn.query(sql, [data, id], (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          });
         } else {
-          reject(new Error(err));
+          reject(err);
         }
       });
     });

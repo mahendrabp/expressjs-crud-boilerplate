@@ -29,10 +29,18 @@ const categoryModel = {
 
   postCategory: data => {
     return new Promise((resolve, reject) => {
-      const sql = 'INSERT INTO categories SET ?';
-      conn.query(sql, data, (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM categories WHERE category = ?';
+      conn.query(sql, data.category, (err, result) => {
+        console.log(result.length > 0);
+        if (result.length < 1) {
+          const sql = 'INSERT INTO categories SET ?';
+          conn.query(sql, data, (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          });
         } else {
           reject(err);
         }
@@ -42,12 +50,20 @@ const categoryModel = {
 
   updateCategory: (data, id) => {
     return new Promise((resolve, reject) => {
-      const sql = 'UPDATE categories SET ? WHERE id = ?';
-      conn.query(sql, [data, id], (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM categories WHERE category = ?';
+      conn.query(sql, data.category, (err, result) => {
+        console.log(result.length === 1);
+        if (result.length < 1) {
+          const sql = 'INSERT INTO categories SET ?';
+          conn.query(sql, data, (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          });
         } else {
-          reject(new Error(err));
+          reject(err);
         }
       });
     });

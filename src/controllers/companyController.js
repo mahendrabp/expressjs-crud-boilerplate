@@ -1,5 +1,7 @@
 const companyModel = require('../models/company');
 const client = require('../helpers/redis');
+const path = require('path');
+const fs = require('fs');
 
 /**
  * @description :
@@ -67,7 +69,8 @@ const companyController = {
   },
 
   postCompany: (req, res) => {
-    const { name, logo, location, description } = req.body;
+    const { name, location, description } = req.body;
+    const logo = req.file.filename;
 
     if (name == null || name == '') {
       return res.status(400).json({
@@ -117,14 +120,16 @@ const companyController = {
         return res.status(400).json({
           status: 400,
           error: true,
-          message: err
+          message: 'company already exist'
         });
       });
   },
 
   updateCompany: (req, res) => {
     const id = req.params.id;
-    const { name, logo, location, description } = req.body;
+    const logo = req.file.filename;
+    const { name, location, description } = req.body;
+
     if (name == null || name == '') {
       return res.status(400).json({
         status: 400,
@@ -174,7 +179,11 @@ const companyController = {
               });
             })
             .catch(err => {
-              res.status(400).json(err);
+              return res.status(404).json({
+                status: 404,
+                error: true,
+                message: 'company already exist'
+              });
             });
         } else {
           return res.status(404).json({
@@ -194,16 +203,29 @@ const companyController = {
     companyModel
       .getCompanyById(req)
       .then(result => {
+        // console.log(result[0].logo);
         if (result.length > 0) {
+          const dir = path.resolve(
+            __dirname,
+            `../../public/logo/${result[0].logo}`
+          );
+          fs.unlinkSync(dir);
+
           companyModel
             .deleteCompany(id)
             .then(result => {
-              res.status(200).send({
+              return res.status(200).json({
+                status: 200,
+                error: false,
                 message: 'success delete company'
               });
             })
             .catch(err => {
-              res.status(400).json(err);
+              return res.status(400).json({
+                status: 400,
+                error: true,
+                message: 'cannot delete company'
+              });
             });
         } else {
           return res.status(404).json({
@@ -214,7 +236,11 @@ const companyController = {
         }
       })
       .catch(err => {
-        res.status(400).json(err);
+        return res.status(400).json({
+          status: 400,
+          error: true,
+          message: 'unexpected error'
+        });
       });
   }
 };

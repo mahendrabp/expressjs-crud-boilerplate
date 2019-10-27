@@ -28,11 +28,19 @@ const companyModel = {
   },
 
   postCompany: data => {
-    const sql = 'INSERT INTO companies SET ?';
     return new Promise((resolve, reject) => {
-      conn.query(sql, data, (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM companies WHERE name = ?';
+      conn.query(sql, data.name, (err, result) => {
+        console.log(result.length > 0);
+        if (result.length < 1) {
+          const sql = 'INSERT INTO companies SET ?';
+          conn.query(sql, data, (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          });
         } else {
           reject(err);
         }
@@ -42,12 +50,20 @@ const companyModel = {
 
   updateCompany: (data, id) => {
     return new Promise((resolve, reject) => {
-      const sql = 'UPDATE companies SET ? WHERE id = ?';
-      conn.query(sql, [data, id], (err, result) => {
-        if (!err) {
-          resolve(result);
+      const sql = 'SELECT * FROM companies WHERE name = ?';
+      conn.query(sql, data.name, (err, result) => {
+        // console.log(result.length === 1);
+        if (result.length < 1) {
+          const sql = 'INSERT INTO companies SET ?';
+          conn.query(sql, data, (err, result) => {
+            if (!err) {
+              resolve(result);
+            } else {
+              reject(err);
+            }
+          });
         } else {
-          reject(new Error(err));
+          reject(err);
         }
       });
     });
