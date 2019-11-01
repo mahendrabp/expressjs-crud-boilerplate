@@ -8,10 +8,15 @@ require('./src/helpers/auth')(passport);
 const multer = require('multer');
 
 const app = express(); // init app express
+app.use('/public', express.static('public'));
 //start use body-parser
 app.use(cors());
-app.use(bodyParser.urlencoded({ extended: true }));
+// app.use(bodyParser.json());
+// app.use(bodyParser.urlencoded({ extended: true }));
+// use body parser from json
 app.use(bodyParser.json());
+// use body parser from url-encoded
+app.use(bodyParser.urlencoded({ extended: true }));
 // end use body-parser
 const port = configs.port; // take port
 const routerNav = require('./src/index'); // this is for Route

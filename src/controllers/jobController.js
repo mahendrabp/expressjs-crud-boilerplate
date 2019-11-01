@@ -2,6 +2,7 @@ const jobModel = require('../models/job'); //import jobModel
 const uuidv4 = require('uuid/v4'); //uudi
 const client = require('../helpers/redis');
 const moment = require('moment');
+const { pagination } = require('../helpers/pagination');
 
 /**
  * @description :
@@ -13,28 +14,39 @@ const jobController = {
   getJob: (req, res) => {
     const jobKeyRedis = `${req.originalUrl}`;
     console.log(jobKeyRedis);
+    const page = pagination(req);
     return client.get(jobKeyRedis, (err, result) => {
       if (result) {
+        var data = JSON.parse(result);
+        let count_perpage = data.length;
+
         return res.json({
           source: 'cache',
+          count_perpage: count_perpage,
           error: false,
           message: 'this result from cache',
-          data: JSON.parse(result)
+          data: data
         });
       } else {
         jobModel
-          .getJob(req)
+          .getJob(req, page)
           .then(result => {
-            client.setex(jobKeyRedis, 60, JSON.stringify(result));
+            let count_perpage = result.length;
+            client.setex(jobKeyRedis, 30, JSON.stringify(result));
             return res.json({
               source: 'api',
+              count_perpage: count_perpage,
               error: false,
               message: 'this result from api',
               data: result
             });
           })
-          .catch(error => {
-            console.log(error);
+          .catch(err => {
+            return res.status(404).json({
+              status: 404,
+              error: true,
+              message: err
+            });
           });
       }
     });

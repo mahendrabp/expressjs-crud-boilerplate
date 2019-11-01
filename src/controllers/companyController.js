@@ -25,7 +25,7 @@ const companyController = {
         companyModel
           .getCompany(req)
           .then(result => {
-            client.setex(companyKeyRedis, 3600, JSON.stringify(result));
+            client.setex(companyKeyRedis, 30, JSON.stringify(result));
             return res.json({
               source: 'api',
               status: 200,

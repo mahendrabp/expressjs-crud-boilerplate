@@ -22,7 +22,7 @@ const categoryController = {
         categoryModel
           .getCategory(req)
           .then(result => {
-            client.setex(categoryKeyRedis, 3600, JSON.stringify(result));
+            client.setex(categoryKeyRedis, 30, JSON.stringify(result));
             return res.json({
               source: 'api',
               error: false,

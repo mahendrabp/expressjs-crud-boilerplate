@@ -120,7 +120,7 @@ const userController = {
                   (err, token) => {
                     if (err) console.log(err);
                     console.log(token);
-                    res.json({
+                    return res.status(200).json({
                       status: 200,
                       error: false,
                       message: 'Success to login',
@@ -131,7 +131,7 @@ const userController = {
               })
               .catch(err => console.log(err));
           } else {
-            res.json({
+            return res.status(400).json({
               status: 400,
               error: true,
               message: 'Password invalid'
@@ -188,16 +188,16 @@ const userController = {
         data.password = hash;
         userModel
           .registerUser(data)
-          .then(result =>
-            res.json({
+          .then(result => {
+            return res.status(200).json({
               status: 200,
               error: false,
               message: 'Success to register new user',
               data: {
                 email
               }
-            })
-          )
+            });
+          })
           .catch(err => {
             return res.status(400).json({
               status: 400,
