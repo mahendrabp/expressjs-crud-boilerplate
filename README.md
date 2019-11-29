@@ -24,18 +24,20 @@ This documentation outlines the Jobs Find Backend API functionality.
 ## Table of contents
 
 - [Job Posting App API](#job-posting-app-api)
+
   - [Introduction](#introduction)
   - [Table of contents](#table-of-contents)
-  - [TODO Tasks](#todo-tasks)
+  - [Features](#features)
   - [Stacks](#stacks)
   - [Build Setup](#build-setup)
   - [HTTP Response Code](#http-response-code)
   - [API Docs](#api-docs)
     - [Jobs](#jobs)
     - [Company](#company)
-    - [Ctegory](#category)
+    - [Category](#category)
     - [User](#user)
     - [Auth](#auth)
+  - [License and Support](#license-and-support)
 
 ## Feature
 
@@ -130,7 +132,7 @@ Each response will be returned with one of the following HTTP status codes:
 | PATCH  | /api/v1/jobs:id | Update job        | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
 | DELETE | /api/v1/jobs:id | Delete job        | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
 
-### Companies
+### Company
 
 | Method | Endpoint              | Description        | Request Param       | Request Body                                                                   |
 | ------ | --------------------- | ------------------ | ------------------- | ------------------------------------------------------------------------------ |
@@ -167,5 +169,10 @@ Each response will be returned with one of the following HTTP status codes:
 | POST   | /api/v1/users/register/ | Register user | -               | `email`: STRING, `password`: STRING |
 
 ---
+
+## License and Support
+
+For API support, please contact me
+[mahendrabp](https://github.com/mahendrabp 'mahendrabp')
 
 Copyright © 2019 by Mahendra Bimantara Putra
