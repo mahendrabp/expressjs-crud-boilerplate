@@ -13,32 +13,31 @@ const companyController = {
   getCompany: (req, res) => {
     const companyKeyRedis = `${req.originalUrl}`;
     return client.get(companyKeyRedis, (err, result) => {
-      if (result) {
-        return res.json({
-          source: 'cache',
-          status: 200,
-          error: false,
-          message: 'this result from cache',
-          data: JSON.parse(result)
-        });
-      } else {
-        companyModel
-          .getCompany(req)
-          .then(result => {
-            client.setex(companyKeyRedis, 30, JSON.stringify(result));
-            return res.json({
-              source: 'api',
-              status: 200,
-              error: false,
-              message: 'this result from api',
-              data: result
-            });
-          })
-          .catch(error => {
-            // console.log(error);
-            return res.json(error.toString());
+      // if (result) {
+      //   return res.json({
+      //     source: 'cache',
+      //     status: 200,
+      //     error: false,
+      //     message: 'this result from cache',
+      //     data: JSON.parse(result)
+      //   });
+      // } else {
+      companyModel
+        .getCompany(req)
+        .then(result => {
+          // client.setex(companyKeyRedis, 30, JSON.stringify(result));
+          return res.json({
+            source: 'api',
+            status: 200,
+            error: false,
+            message: 'this result from api',
+            data: result
           });
-      }
+        })
+        .catch(error => {
+          // console.log(error);
+          return res.json(error.toString());
+        });
     });
   },
 
@@ -49,7 +48,7 @@ const companyController = {
       .then(result => {
         if (result.length > 0) {
           return res.json({
-            source: 'cache',
+            source: 'api',
             status: 200,
             error: false,
             message: 'success get company by id',
@@ -79,21 +78,21 @@ const companyController = {
         message: `name company can't be empty`
       });
     }
-    if (logo == null || logo == '') {
+    if (logo == null || logo === '') {
       return res.status(400).json({
         status: 400,
         error: true,
         message: `logo company can't be empty`
       });
     }
-    if (location == null || location == '') {
+    if (location == null || location === '') {
       return res.status(400).json({
         status: 400,
         error: true,
         message: `location company can't be empty`
       });
     }
-    if (description == null || description == '') {
+    if (description == null || description === '') {
       return res.status(400).json({
         status: 400,
         error: true,

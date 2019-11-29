@@ -1,7 +1,7 @@
 // const JwtStrategy = require('passport-jwt').Strategy;
 // const ExtractJwt = require('passport-jwt').ExtractJwt;
 const JwtStrategy = require('passport-jwt').Strategy;
-const ExtractJwt = require('passport-jwt').ExtractJwt;
+const { ExtractJwt } = require('passport-jwt');
 const conn = require('../configs/db');
 
 require('dotenv');

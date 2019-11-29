@@ -17,7 +17,7 @@ const jobModel = {
     const paging = `${sql} LIMIT ? OFFSET ?`;
 
     return new Promise((resolve, reject) => {
-      countAllPage(page, query.name, 'jobs')
+      countAllPage(page, query.name, query.location, 'jobs')
         .then(maxPage => {
           const infoPage = {
             currentPage: page.page,
@@ -28,11 +28,11 @@ const jobModel = {
 
           conn.query(
             paging,
-            query.name == null
+            query.name == null && query.location == null
               ? [page.item, page.offset]
               : [
                   '%' + query.name + '%',
-                  '%' + query.company + '%',
+                  '%' + query.location + '%',
                   page.item,
                   page.offset
                 ],

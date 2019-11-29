@@ -49,7 +49,7 @@ const categoryController = {
             message: 'category ID Not found'
           });
         } else {
-          res.status(200).json(result);
+          return res.status(200).json(result);
         }
       })
       .catch(err => {
@@ -93,7 +93,7 @@ const categoryController = {
   },
 
   updateCategory: (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     if (
       req.body.category === null ||
       req.body.category === [] ||

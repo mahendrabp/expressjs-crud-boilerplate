@@ -1,7 +1,7 @@
-const userModel = require('../models/user');
 const uuid = require('uuid/v4');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const userModel = require('../models/user');
 // const client = require('../helpers/redis');
 // const form = require('../helpers/formresponse');
 const secretKey = process.env.API_JWT_SECRET || 'secret';
@@ -202,7 +202,7 @@ const userController = {
             return res.status(400).json({
               status: 400,
               error: true,
-              message: 'unexpected error'
+              message: 'email already exist'
             });
           });
       });

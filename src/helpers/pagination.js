@@ -9,15 +9,18 @@ module.exports.pagination = req => {
 };
 
 //Get Max Page For Pagination
-module.exports.countAllPage = (page, keyword, table) => {
+module.exports.countAllPage = (page, keyword, keyword2, table) => {
   return new Promise((resolve, reject) => {
     if (keyword != null) {
       table += ' WHERE name LIKE ?';
     }
+    if (keyword != null) {
+      table += ' && location LIKE ?';
+    }
 
     conn.query(
       `SELECT COUNT(*) as total FROM ${table}`,
-      ['%' + keyword + '%'],
+      ['%' + keyword + '%', '%' + keyword2 + '%'],
       (err, result) => {
         if (!err) {
           console.log(result[0].total);
@@ -67,10 +70,10 @@ module.exports.sortBy = (req, sql) => {
 module.exports.searchJob = (req, sql) => {
   const search = req.query.search;
   const name = req.query.name; // this variable name is contain req.query.name , remember query is parameter from URL , like localhost:3000/?nama=
-  const company = req.query.company;
+  const location = req.query.location;
 
-  if (name != null || company != null) {
-    sql += ' AND j.name LIKE ? AND o.name LIKE ?';
+  if (name != null || location != null) {
+    sql += ' AND j.name LIKE ? AND j.location LIKE ?';
   } else {
     sql;
   }
@@ -87,6 +90,6 @@ module.exports.searchJob = (req, sql) => {
   return {
     sql,
     name,
-    company
+    location
   };
 };

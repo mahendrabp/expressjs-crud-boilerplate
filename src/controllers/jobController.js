@@ -15,42 +15,42 @@ const jobController = {
     const jobKeyRedis = `${req.originalUrl}`;
     console.log(jobKeyRedis);
     const page = pagination(req);
-    return client.get(jobKeyRedis, (err, result) => {
-      if (result) {
-        var data = JSON.parse(result);
-        let count_perpage = data.length;
+    // return client.get(jobKeyRedis, (err, result) => {
+    // if (result) {
+    //   var data = JSON.parse(result);
+    //   let count_perpage = data.length;
 
-        return res.json({
-          source: 'cache',
+    //   return res.json({
+    //     source: 'cache',
+    //     count_perpage: count_perpage,
+    //     error: false,
+    //     message: 'this result from cache',
+    //     data: data
+    //   });
+    // } else {
+    jobModel
+      .getJob(req, page)
+      .then(result => {
+        let count_perpage = result.length;
+        client.setex(jobKeyRedis, 30, JSON.stringify(result));
+        return res.status(200).json({
+          source: 'api',
           count_perpage: count_perpage,
           error: false,
-          message: 'this result from cache',
-          data: data
+          message: 'this result from api',
+          data: result
         });
-      } else {
-        jobModel
-          .getJob(req, page)
-          .then(result => {
-            let count_perpage = result.length;
-            client.setex(jobKeyRedis, 30, JSON.stringify(result));
-            return res.json({
-              source: 'api',
-              count_perpage: count_perpage,
-              error: false,
-              message: 'this result from api',
-              data: result
-            });
-          })
-          .catch(err => {
-            return res.status(404).json({
-              status: 404,
-              error: true,
-              message: err
-            });
-          });
-      }
-    });
+      })
+      .catch(err => {
+        return res.status(404).json({
+          status: 404,
+          error: true,
+          message: err
+        });
+      });
   },
+  //   });
+  // },
 
   getJobById: (req, res) => {
     const jobKeyRedis = `${req.originalUrl}`;
@@ -66,29 +66,28 @@ const jobController = {
           });
         } else {
           return client.get(jobKeyRedis, (err, result) => {
-            if (result) {
-              return res.json({
-                source: 'cache',
-                error: false,
-                message: 'this result from cache',
-                data: JSON.parse(result)
-              });
-            } else {
-              jobModel
-                .getJobById(req)
-                .then(result => {
-                  client.setex(jobKeyRedis, 60, JSON.stringify(result));
-                  return res.json({
-                    source: 'api',
-                    error: false,
-                    message: 'this result from api',
-                    data: result
-                  });
-                })
-                .catch(error => {
-                  console.log(error);
+            // if (result) {
+            //   return res.json({
+            //     source: 'cache',
+            //     error: false,
+            //     message: 'this result from cache',
+            //     data: JSON.parse(result)
+            //   });
+            // } else {
+            jobModel
+              .getJobById(req)
+              .then(result => {
+                client.setex(jobKeyRedis, 60, JSON.stringify(result));
+                return res.json({
+                  source: 'api',
+                  error: false,
+                  message: 'this result from api',
+                  data: result
                 });
-            }
+              })
+              .catch(error => {
+                console.log(error);
+              });
           });
         }
       })
@@ -137,14 +136,14 @@ const jobController = {
         message: `description job can't be empty`
       });
     }
-    if (salary == null || salary == '' || salary === null) {
+    if (salary == null || salary === '' || salary === null) {
       return res.status(400).json({
         status: 400,
         error: true,
         message: `salary job can't be empty`
       });
     }
-    if (location == null || location == '' || location === null) {
+    if (location == null || location === '' || location === null) {
       return res.status(400).json({
         status: 400,
         error: true,
@@ -195,7 +194,7 @@ const jobController = {
 
   updateJob: (req, res) => {
     const jobKeyRedis = `${req.originalUrl}`;
-    const id = req.params.id;
+    const { id } = req.params;
     // const date = new Date()
     //   .toISOString()
     //   .slice(0, 19)
@@ -218,21 +217,21 @@ const jobController = {
         message: `name job can't be empty`
       });
     }
-    if (description == null || description == '' || description === null) {
+    if (description == null || description === '' || description === null) {
       return res.status(400).json({
         status: 400,
         error: true,
         message: `description job can't be empty`
       });
     }
-    if (salary == null || salary == '' || salary === null) {
+    if (salary == null || salary === '' || salary === null) {
       return res.status(400).json({
         status: 400,
         error: true,
         message: `salary job can't be empty`
       });
     }
-    if (location == null || location == '' || location === null) {
+    if (location == null || location === '' || location === null) {
       return res.status(400).json({
         status: 400,
         error: true,
@@ -318,7 +317,7 @@ const jobController = {
   //     });
   // }
   deleteJob: (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     jobModel
       .getJobById(req)
       .then(result => {
@@ -329,12 +328,15 @@ const jobController = {
               res.status(200).json({
                 status: 200,
                 error: false,
-                message: 'Success to delete job',
-                data
+                message: 'Success to delete job'
               });
             })
             .catch(err => {
-              res.status(400).json(err);
+              res.status(400).json({
+                status: 400,
+                error: true,
+                message: 'error unexpected'
+              });
             });
         } else {
           res.status(404).json({

@@ -1,81 +1,110 @@
-<h1 align="center">Jobs Find Backend<br>-RESTful API with Node.js-</h1>
+# Job Posting APP API
 
-![](https://img.shields.io/badge/Code%20Style-Standard-yellow.svg)
-![](https://img.shields.io/badge/Dependencies-Express-green.svg)
-![](https://img.shields.io/badge/Cloud%20Storage-Amazon%20Web%20Service-orange.svg)
-![](https://img.shields.io/badge/License-Beerware-yellowgreen.svg)
+> RESTful API with nodejs for Job Posting App
 
-<!--
-# Express Boilerplate
+<p align="center">
+  <a href="https://nodejs.org/">
+    <img title="Node JS" src="https://cdn-images-1.medium.com/max/871/1*d2zLEjERsrs1Rzk_95QU9A.png">
+  </a>
+</p>
+<p align="center">
+  <a href="https://expressjs.com/">
+    <img title="Restful API" src="https://expressjs.com/images/express-facebook-share.png">
+  </a>
+</p>
 
---- -->
-
-<!-- ## Table of Contents
-
-- [Introduction](#introduction)
-- [Prerequiste](#prerequiste)
-- [Configuration](#configuration)
-- [Installation](#installation)
-  - [Clone](#clone)
-  - [Environment](#create-environment-variable)
-  - [Start](#start-development-server)
-- [Dependencies](#dependencies)
-- [License](#license)
-
---- -->
+---
 
 ## Introduction
 
-Jobs Find Backend API is an API that allow the users get list of jobs and company information data from database. obs Find Backend API also allow users to read, create, update and delete a job ,company,category information into/from database.
+Jobs Posting Backend API is an API that allow the users get list of jobs and company information data from database. obs Find Backend API also allow users to read, create, update and delete a job ,company,category information into/from database.
 
 This documentation outlines the Jobs Find Backend API functionality.
 
----
+## Table of contents
 
-## Prerequiste
+- [Job Posting App API](#job-posting-app-api)
+  - [Introduction](#introduction)
+  - [Table of contents](#table-of-contents)
+  - [TODO Tasks](#todo-tasks)
+  - [Stacks](#stacks)
+  - [Build Setup](#build-setup)
+  - [HTTP Response Code](#http-response-code)
+  - [API Docs](#api-docs)
+    - [Jobs](#jobs)
+    - [Company](#company)
+    - [Ctegory](#category)
+    - [User](#user)
+    - [Auth](#auth)
 
-<!-- - Node.js - Download and Install [Node.js](https://nodejs.org/en/) - Simple bash script to manage multiple active node.js versions.
+## Feature
 
-- Nodemon - Download and Install [Nodemon](https://nodemon.io/) - nodemon is a tool that automatically restarting the node application when file changes in the directory are detected. -->
+- [x] CRUD Jobs
+- [x] CRUD Companies
+- [x] Validation schema
+- [x] Search job by name
+- [x] Sort job by name, company, and date updated
+- [x] Pagination
+- [x] Upload logo
+- [x] Allowed CORS
+- [x] Authentication with JWT
+- [x] Caching with redis
 
-1. <a href="https://nodejs.org/en/download/">Node Js</a>
-2. <a href="https://expressjs.com/en/starter/installing.html">Express JS </a>
-3. <a href="https://www.getpostman.com/">Postman</a>
-4. <a href="https://nodemon.io/">Nodemon</a>
-5. Web Server (ex. localhost)
+## Stacks
 
----
+- NodeJS
+- MySQL
+- ExpressJS
+- JWT
+- Redis
+- Bcryptjs
+- multer
 
-## Getting Started
+## Build Setup
 
-![node.js](https://www.javatpoint.com/js/nodejs/images/node-js-tutorial.png)
+1. Clone repository
+   `$ git clone https://github.com/mahendrabp/expressjs-crud-boilerplate`
 
-### Node.js
+2. Install depedencies
 
-Node.js is an open-source, cross-platform JavaScript run-time environment that executes JavaScript code outside of a browser.
+```bash
+# with npm
+$ npm install
 
-![express](https://expressjs.com/images/express-facebook-share.png)
+# or with yarn
+$ yarn install
+```
 
-### Express.js
+3. Setup your environment variable in `.env` files (if not exists, create your own).
 
-Express.js
+```env
 
-![restful api](https://s3.amazonaws.com/kinlane-productions/salesforce/salesforce-rest-api.png)
+# DATABASE
+PORT = 'port for express'
 
-### RESTFul API
+DB_HOST = 'your_db_host'
+DB_USER = 'your_db_user'
+DB_PASSWORD = 'your_password_db'
+DB_NAME = 'database_name'
+DB_PORT = ''
 
-A RESTful API is an
+# SECRET KEY
+API_JWT_SECRET=''
+```
 
-### HTTP Requests
+<!-- 4. Run database migrations (with shortcut scripts with `yarn` or `npm run`)
 
-All API requests are made by sending a secure HTTPS request using one of the following methods, depending on the action being taken:
+```bash
 
-- `GET` Get a resource or list of resources
-- `POST` Create a resource
-- `PUT/PATCH` Update a resource
-- `DELETE` Delete a resource
+```
 
-### HTTP Response Codes
+5. Start API server
+
+```bash
+
+``` -->
+
+## HTTP Response Code
 
 Each response will be returned with one of the following HTTP status codes:
 
@@ -89,61 +118,54 @@ Each response will be returned with one of the following HTTP status codes:
 | `405` | `Method not allowed` | The resource being accessed doesn't support the method specified (GET, POST, etc.). |
 | `500` | `Server Error`       | An error on the server occurred                                                     |
 
-<!-- ## Configuration
+## API Docs
 
-<ol>
-  <li>Basic Configuration</li>
-  <li>Structured</li>
-  <li>File Handling
-  </li>
-  <li>Auth with JWT</li>
-  <li>Unit Testing</li>
-  <li>Redis Implementation</li>
-</ol>
+### Jobs
 
---- -->
+| Method | Endpoint        | Description       | Request Param       | Request Body                                                                                                        | Request Query                                                                                         |
+| ------ | --------------- | ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| GET    | /api/v1/jobs    | Get jobs          | -                   | -                                                                                                                   | `name`: STRING, `company`: STRING,`limit`: NUMBER, `page`: NUMBER, `sortby`: STRING,`orderby`: STRING |
+| GET    | /api/v1/jobs:id | Get one job by id | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
+| POST   | /api/v1/jobs    | Create new job    | -                   | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
+| PATCH  | /api/v1/jobs:id | Update job        | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
+| DELETE | /api/v1/jobs:id | Delete job        | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
 
-## Installation
+### Companies
 
-### Clone
+| Method | Endpoint              | Description        | Request Param       | Request Body                                                                   |
+| ------ | --------------------- | ------------------ | ------------------- | ------------------------------------------------------------------------------ |
+| GET    | /api/v1/companies     | Get company        | -                   | -                                                                              |
+| GET    | /api/v1/companies/:id | Get one company    | `id`: STRING (UUID) | -                                                                              |
+| POST   | /api/v1/companies     | Create new company | -                   | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
+| PATCH  | /api/v1/companies/:id | Update company     | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
+| DELETE | /api/v1/companies/:id | Delete company     | `id`: STRING (UUID) | -                                                                              |
 
-```bash
-$ git clone https://github.com/mahendrabp/expressjs-crud-boilerplate.git
-$ cd expressjs-crud-boilerplate
-$ npm install
-```
+### Category
 
----
+| Method | Endpoint               | Description         | Request Param | Request Body       |
+| ------ | ---------------------- | ------------------- | ------------- | ------------------ |
+| GET    | /api/v1/categories     | Get category        | -             | -                  |
+| GET    | /api/v1/categories/:id | Get one category    | `id`: INT     | -                  |
+| POST   | /api/v1/categories     | Create new category | -             | `category`: STRING |
+| PATCH  | /api/v1/categories/:id | Update category     | `id`: INT     | `category`: STRING |
+| DELETE | /api/v1/categories/:id | Delete category     | `id`: INT     | -                  |
 
-### Create Environment Variable
+### User
 
-```bash
-$ cp .env.example .env
-$ nano .env
-```
+| Method | Endpoint          | Description  | Request Param       | Request Body                        | Request Headers |
+| ------ | ----------------- | ------------ | ------------------- | ----------------------------------- | --------------- |
+| GET    | /api/v1/users     | Get all user | `id`: STRING (UUID) | -                                   | -               |
+| GET    | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
+| PATCH  | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | `email`: STRING, `password`: STRING | `bearer`: token |
+| DELETE | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
 
----
+### Auth
 
-### Start Development Server
-
-```bash
-$ npm start
-```
-
----
-
-## Other Dependencies
-
-- [mysql](#)
-- [bcrypt](#)
-- [jsonwebtoken](#)
-- etc.
+| Method | Endpoint                | Description   | Request Headers | Request Body                        |
+| ------ | ----------------------- | ------------- | --------------- | ----------------------------------- |
+| POST   | /api/v1/users/login/    | Login user    | -               | `email`: STRING, `password`: STRING |
+| POST   | /api/v1/users/register/ | Register user | -               | `email`: STRING, `password`: STRING |
 
 ---
 
-## License and Support
-
-For API support, please contact me
-[mahendrabp](https://github.com/mahendrabp 'mahendrabp')
-
----
+Copyright © 2019 by Mahendra Bimantara Putra
