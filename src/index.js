@@ -1,13 +1,13 @@
 const express = require('express');
 const Route = express.Router();
 
-//import each of Route
+// import each of Route
 const categories = require('./routes/categoryRoute');
 const companies = require('./routes/companyRoute');
 const jobs = require('./routes/jobRoute');
 const users = require('./routes/userRoute');
 
-//then route to this
+// then route to this
 Route.use('/api/v1/categories', categories);
 Route.use('/api/v1/companies', companies);
 Route.use('/api/v1/jobs', jobs);

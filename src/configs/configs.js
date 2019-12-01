@@ -1,6 +1,6 @@
 require('dotenv/config');
 
-//this is fror env
+// this is fror env
 module.exports = {
   database: {
     mysql: {

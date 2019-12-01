@@ -10,7 +10,7 @@ const jobModel = {
   // this parameter 'req' below is for pagination , if you delete parameter 'req', it will error , try !
   getJob: (req, page) => {
     let sql =
-      'SELECT j.id as id,j.name as job, o.name as company , c.category as category, o.logo as logo, j.category_id,j.company_id,j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.company_id = o.id AND j.category_id = c.id';
+      'SELECT j.id as id,j.name as job, o.name as company , o.description as companyDesc, c.category as category, o.logo as logo, j.category_id,j.company_id,j.description, j.salary, j.location, j.created_at, j.updated_at FROM jobs j INNER JOIN categories c INNER JOIN companies o WHERE j.company_id = o.id AND j.category_id = c.id';
 
     const query = searchJob(req, sql);
     sql = sortBy(req, query.sql);
