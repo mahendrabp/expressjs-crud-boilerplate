@@ -109,23 +109,26 @@ const companyController = {
     companyModel
       .postCompany(data)
       .then(result => {
+        console.log(result);
         return res.status(200).json({
           status: 200,
           error: false,
-          message: 'success add company'
+          message: 'success add company',
+          data
         });
       })
       .catch(err => {
         return res.status(400).json({
           status: 400,
           error: true,
-          message: 'company already exist'
+          message: 'company already exist',
+          data
         });
       });
   },
 
   updateCompany: (req, res) => {
-    const id = req.params.id;
+    const { id } = req.params;
     const logo = req.file.filename;
     const { name, location, description } = req.body;
 
