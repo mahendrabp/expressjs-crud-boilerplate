@@ -32,6 +32,7 @@ This documentation outlines the Jobs Find Backend API functionality.
   - [Build Setup](#build-setup)
   - [HTTP Response Code](#http-response-code)
   - [API Docs](#api-docs)
+    - [Base Url](#base-url)
     - [Jobs](#jobs)
     - [Company](#company)
     - [Category](#category)
@@ -122,51 +123,56 @@ Each response will be returned with one of the following HTTP status codes:
 
 ## API Docs
 
+### Base Url 
+```bash
+https://crownhire.site/
+```
+
 ### Jobs
 
 | Method | Endpoint        | Description       | Request Param       | Request Body                                                                                                        | Request Query                                                                                         |
 | ------ | --------------- | ----------------- | ------------------- | ------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| GET    | /api/v1/jobs    | Get jobs          | -                   | -                                                                                                                   | `name`: STRING, `company`: STRING,`limit`: NUMBER, `page`: NUMBER, `sortby`: STRING,`orderby`: STRING |
-| GET    | /api/v1/jobs:id | Get one job by id | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
-| POST   | /api/v1/jobs    | Create new job    | -                   | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
-| PATCH  | /api/v1/jobs:id | Update job        | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
-| DELETE | /api/v1/jobs:id | Delete job        | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
+| GET    | api/v1/jobs    | Get jobs          | -                   | -                                                                                                                   | `name`: STRING, `company`: STRING,`limit`: NUMBER, `page`: NUMBER, `sortby`: STRING,`orderby`: STRING |
+| GET    | api/v1/jobs:id | Get one job by id | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
+| POST   | api/v1/jobs    | Create new job    | -                   | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
+| PATCH  | api/v1/jobs:id | Update job        | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`salary`:STRING,`description`: STRING ,`category_id`: STRING, `compant_id`:STRING | -                                                                                                     |
+| DELETE | api/v1/jobs:id | Delete job        | `id`: STRING (UUID) | -                                                                                                                   | -                                                                                                     |
 
 ### Company
 
 | Method | Endpoint              | Description        | Request Param       | Request Body                                                                   |
 | ------ | --------------------- | ------------------ | ------------------- | ------------------------------------------------------------------------------ |
-| GET    | /api/v1/companies     | Get company        | -                   | -                                                                              |
-| GET    | /api/v1/companies/:id | Get one company    | `id`: STRING (UUID) | -                                                                              |
-| POST   | /api/v1/companies     | Create new company | -                   | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
-| PATCH  | /api/v1/companies/:id | Update company     | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
-| DELETE | /api/v1/companies/:id | Delete company     | `id`: STRING (UUID) | -                                                                              |
+| GET    | api/v1/companies     | Get company        | -                   | -                                                                              |
+| GET    | api/v1/companies/:id | Get one company    | `id`: STRING (UUID) | -                                                                              |
+| POST   | api/v1/companies     | Create new company | -                   | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
+| PATCH  | api/v1/companies/:id | Update company     | `id`: STRING (UUID) | `name`: STRING,`location`: STRING,`logo`: STRING (IMAGE),`description`: STRING |
+| DELETE | api/v1/companies/:id | Delete company     | `id`: STRING (UUID) | -                                                                              |
 
 ### Category
 
 | Method | Endpoint               | Description         | Request Param | Request Body       |
 | ------ | ---------------------- | ------------------- | ------------- | ------------------ |
-| GET    | /api/v1/categories     | Get category        | -             | -                  |
-| GET    | /api/v1/categories/:id | Get one category    | `id`: INT     | -                  |
-| POST   | /api/v1/categories     | Create new category | -             | `category`: STRING |
-| PATCH  | /api/v1/categories/:id | Update category     | `id`: INT     | `category`: STRING |
-| DELETE | /api/v1/categories/:id | Delete category     | `id`: INT     | -                  |
+| GET    | api/v1/categories     | Get category        | -             | -                  |
+| GET    | api/v1/categories/:id | Get one category    | `id`: INT     | -                  |
+| POST   | api/v1/categories     | Create new category | -             | `category`: STRING |
+| PATCH  | api/v1/categories/:id | Update category     | `id`: INT     | `category`: STRING |
+| DELETE | api/v1/categories/:id | Delete category     | `id`: INT     | -                  |
 
 ### User
 
 | Method | Endpoint          | Description  | Request Param       | Request Body                        | Request Headers |
 | ------ | ----------------- | ------------ | ------------------- | ----------------------------------- | --------------- |
-| GET    | /api/v1/users     | Get all user | `id`: STRING (UUID) | -                                   | -               |
-| GET    | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
-| PATCH  | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | `email`: STRING, `password`: STRING | `bearer`: token |
-| DELETE | /api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
+| GET    | api/v1/users     | Get all user | `id`: STRING (UUID) | -                                   | -               |
+| GET    | api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
+| PATCH  | api/v1/users/:id | Get one user | `id`: STRING (UUID) | `email`: STRING, `password`: STRING | `bearer`: token |
+| DELETE | api/v1/users/:id | Get one user | `id`: STRING (UUID) | -                                   | -               |
 
 ### Auth
 
 | Method | Endpoint                | Description   | Request Headers | Request Body                        |
 | ------ | ----------------------- | ------------- | --------------- | ----------------------------------- |
-| POST   | /api/v1/users/login/    | Login user    | -               | `email`: STRING, `password`: STRING |
-| POST   | /api/v1/users/register/ | Register user | -               | `email`: STRING, `password`: STRING |
+| POST   | api/v1/users/login/    | Login user    | -               | `email`: STRING, `password`: STRING |
+| POST   | api/v1/users/register/ | Register user | -               | `email`: STRING, `password`: STRING |
 
 ---
 
