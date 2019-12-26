@@ -86,7 +86,7 @@ const userController = {
       .then(result => {
         //filter apakah ada email di database
         const arrayEmail = result.filter(el => {
-          return el.email == email;
+          return el.email == email.toLowerCase();
         });
 
         if (arrayEmail.length == 0) {
@@ -166,7 +166,7 @@ const userController = {
         .status(400)
         .json({ status: 400, error: true, message: 'email must be valid' });
     }
-    const email = req.body.email;
+    const email = req.body.email.toLowerCase();
 
     if (req.body.password == '' || req.body.password == null) {
       return res.status(400).json({
