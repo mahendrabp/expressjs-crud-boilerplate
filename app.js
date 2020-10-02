@@ -1,5 +1,4 @@
 const express = require('express'); // must be there
-const bodyParser = require('body-parser');
 const cors = require('cors');
 const configs = require('./src/configs/configs'); // import cofiguration file
 const logger = require('./src/helpers/logger');
@@ -14,9 +13,7 @@ app.use(cors());
 // app.use(bodyParser.json());
 // app.use(bodyParser.urlencoded({ extended: true }));
 // use body parser from json
-app.use(bodyParser.json());
-// use body parser from url-encoded
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(express.json()); //express lib has the bodyparser on its code
 // end use body-parser
 const port = configs.port; // take port
 const routerNav = require('./src/index'); // this is for Route
